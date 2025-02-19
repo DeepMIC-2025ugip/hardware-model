@@ -1,23 +1,38 @@
+import os
+
 from alg.gpt_call import create_messages, gpt_call
 from alg.hide_error import hide_alsa_error, redirect_error_output, restore_stderr
+from alg.prompt.text_to_text_prompt import SYSTEM_PROMPT, USER_PROMPT
 from alg.speech_call import speech_call
 from alg.speech_recognition_call import speech_recognition_call
 
 
+def format_conversation(user: list[str], ai: list[str]) -> str:
+    return "\n".join(
+        [f"Child: {user[i]}\nYou: {ai[i]}" for i in range(min(len(user), len(ai)))]
+    )
+
+
 def sts_roop():
+    audio_dir = "data/conversation3"
+    os.makedirs(audio_dir, exist_ok=True)
+
+    child_words = []
+    return_words = []
+
     while True:
         voice_text = speech_recognition_call()
-        print(f"Speech To Text: {voice_text}")
 
-        system_prompt = "You are the most intelligent person in the world."
-        messages = create_messages(system_prompt, voice_text)
+        conversation = format_conversation(child_words, return_words)
+        messages = create_messages(
+            SYSTEM_PROMPT,
+            USER_PROMPT.format(conversation=conversation, input=voice_text),
+        )
         reponse_text = gpt_call(messages)
-        print(f"Text To Speech: {reponse_text}")
-        speech_call(reponse_text, f"{voice_text}.mp3")
+        speech_call(reponse_text, os.path.join(audio_dir, f"{voice_text}.mp3"))
 
-        if voice_text == "stop":
-            print("The program is terminated.")
-            break
+        child_words.append(voice_text)
+        return_words.append(reponse_text)
 
 
 if __name__ == "__main__":

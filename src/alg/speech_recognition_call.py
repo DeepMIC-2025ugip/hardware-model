@@ -9,7 +9,7 @@ THRESHOLD = 2000
 def speech_recognition_call() -> Union[str, None]:
     try:
         with sr.Microphone() as source:
-            print("Listening...")
+            print("\nListening...")
             listener.adjust_for_ambient_noise(source)
             listener.energy_threshold = THRESHOLD
             voice = listener.listen(source)
