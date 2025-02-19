@@ -1,0 +1,16 @@
+README.md
+pyproject.toml
+setup.cfg
+src/alg/__init__.py
+src/alg/client.py
+src/api/__init__.py
+src/api/main.py
+src/api/routers/__init__.py
+src/api/routers/speech_to_text.py
+src/api/routers/test_to_speech.py
+src/api/routers/text_to_text.py
+src/hardware_model.egg-info/PKG-INFO
+src/hardware_model.egg-info/SOURCES.txt
+src/hardware_model.egg-info/dependency_links.txt
+src/hardware_model.egg-info/requires.txt
+src/hardware_model.egg-info/top_level.txt

@@ -1,0 +1,4 @@
+fastapi==0.115.8
+faster-whisper==1.1.1
+numpy==2.2.3
+sounddevice==0.5.1
