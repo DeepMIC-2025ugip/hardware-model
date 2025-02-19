@@ -1,4 +1,4 @@
-from typing import Any, Generator, Literal
+from typing import Any, Generator
 
 from openai import OpenAI
 
@@ -21,7 +21,7 @@ def create_messages(system_prompt: str, user_prompt: str) -> list[dict[str, Any]
     return messages
 
 
-def openai_call(
+def gpt_call(
     messages: list[dict[str, Any]],
     modelname: str = "gpt-4o-mini",
 ) -> Generator[str, None, None]:
@@ -37,15 +37,19 @@ def openai_call(
         timeout=100,
     )
 
+    response_text = ""
     for chunk in response:
         content = chunk.choices[0].delta.content  # type: ignore
         if type(content) == str:
-            yield content
+            response_text += content
+            print(content, end="", flush=True)
+            # yield content
+    return response_text
 
 
 if __name__ == "__main__":
     system_prompt = "You are the most intelligent person in the world."
     user_prompt = input("Q: ")
     messages = create_messages(system_prompt, user_prompt)
-    for response in openai_call(messages):
+    for response in gpt_call(messages):
         print(response, end="", flush=True)
