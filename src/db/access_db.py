@@ -17,14 +17,17 @@ def check_response(response: requests.Response):
         return None
 
 
-def save_conversation(from_system: bool, content: str, visible: bool = True):
+def save_conversation(child_content, ai_content, visible: bool = True):
     """会話データをDBに保存"""
-    data = {"from_system": from_system, "content": content, "visible": visible}
+    for from_system, content in zip([False, True], [child_content, ai_content]):
+        data = {"from_system": from_system, "content": content, "visible": visible}
 
-    response = requests.post(
-        f"{settings.backend_url}/conversations/", data=json.dumps(data), headers=headers
-    )
-    return check_response(response)
+        response = requests.post(
+            f"{settings.backend_url}/conversations/",
+            data=json.dumps(data),
+            headers=headers,
+        )
+        check_response(response)
 
 
 def analyze_day():
