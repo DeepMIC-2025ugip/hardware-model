@@ -1,10 +1,10 @@
 import os
 
-from alg.gpt_call import create_messages, gpt_call
+from model.gpt_call import create_messages, gpt_call
 from alg.hide_error import hide_alsa_error, redirect_error_output, restore_stderr
 from alg.prompt.text_to_text_prompt import SYSTEM_PROMPT, USER_PROMPT
-from alg.speech_call import speech_call
-from alg.speech_recognition_call import speech_recognition_call
+from model.speech_call import speech_call
+from model.speech_recognition_call import speech_recognition_call
 
 
 def format_conversation(user: list[str], ai: list[str]) -> str:
