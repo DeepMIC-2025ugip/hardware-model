@@ -4,7 +4,7 @@ from openai import OpenAI
 from pydub import AudioSegment
 from pydub.playback import play
 
-from alg.settings import settings
+from settings import settings
 
 client = OpenAI(api_key=settings.openai_api_key)
 
