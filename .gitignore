@@ -1,6 +1,12 @@
+.env
 .venv
 __pycache__
-data/
-.env
+
+data/user_info/*
+data/docs/*
+!data/.gitkeep
+!data/user_info/.gitkeep
+!data/docs/.gitkeep
+
 hardware_model.egg-info/
 
