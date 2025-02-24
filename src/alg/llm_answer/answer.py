@@ -35,15 +35,28 @@ def chat_answer(question: str, analysis: str, mental: str, character: str) -> st
     # TODO: analyze, mental, characterを入れてプロンプトを作る
 
     system_prompt = """"""
-    user_prompt = """
-    
-    Question:
-    {question}
-    """
-
     if rag_decision.use_rag:
         related_docs = hybrid_search()
-        user_prompt += f"""\n\nRelated Documents:\n{related_docs}\n"""
+        user_prompt = f"""
+        hogehoge
+        
+        Question:
+        {question}
+        
+        Related Documents:
+        {related_docs}
+        
+        Output:
+        """
+    else:
+        user_prompt = f"""
+        fugafuga
+        
+        Question:
+        {question}
+        
+        Output:
+        """
 
     answer = gpt_call(system_prompt, user_prompt.format(question))
     return answer

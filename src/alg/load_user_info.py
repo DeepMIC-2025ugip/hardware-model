@@ -2,7 +2,7 @@ import json
 import os
 from datetime import datetime, timezone
 
-from db.access_db import get_latest_character
+from db.access_db import get_latest_analysis, get_latest_character, get_latest_mental
 
 
 def load_character():
