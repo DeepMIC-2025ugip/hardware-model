@@ -31,23 +31,23 @@ def save_conversation(child_content, ai_content, visible: bool = True):
 
 
 # TODO:O このAPIを再作成
-def analyze_user():
+def analyze_life():
     """子どもの趣味趣向を分析"""
-    response = requests.post(f"{settings.backend_url}/analysis/analyze/")
+    response = requests.post(f"{settings.backend_url}/analysis/analyze_life/")
     return check_response(response)
 
 
 # TODO: このAPIを作成
 def analyze_mental():
     """子どもの性格を解析"""
-    response = requests.post(f"{settings.backend_url}/mental/analyze/")
+    response = requests.post(f"{settings.backend_url}/mental/analyze_mental/")
     return check_response(response)
 
 
 # TODO: このAPIを再作成
 def analyze_character():
     """子どもの性格を解析"""
-    response = requests.post(f"{settings.backend_url}/characters/analyze/")
+    response = requests.post(f"{settings.backend_url}/characters/analyze_character/")
     return check_response(response)
 
 
@@ -72,10 +72,10 @@ def get_latest_character():
 if __name__ == "__main__":
     save_conversation(from_system=False, content="もう一回テストするよー！！！！")
 
-    analyze_user()
+    analyze_life()
     analyze_mental()
     analyze_character()
 
-    print(get_latest_analysis())
+    get_latest_analysis()
     print(get_latest_mental())
-    print(get_latest_character())
+    get_latest_character()
