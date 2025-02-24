@@ -14,7 +14,7 @@ from model.gpt_call import gpt_call, gpt_call_schema
 from settings import settings
 
 
-def hybrid_search(question: str, top: int = 4) -> list[str]:
+def hybrid_search(question: str, top: int = 2) -> list[str]:
     url = f"{settings.backend_url}/search/hybrid_search/"
     payload = {"question": question, "top": top}
     response = requests.post(url, json=payload)
@@ -27,13 +27,12 @@ def hybrid_search(question: str, top: int = 4) -> list[str]:
 
 class RagDecision(BaseModel):
     use_rag: bool = Field(..., description="Whether to use RAG")
-    search_sentence: str = Field(..., description="The sentence to search for")
 
 
-def determine_use_rag(question) -> RagDecision:
+def determine_use_rag(question: str, conversation: str) -> RagDecision:
     response = gpt_call_schema(
         DETERMINE_RAG_SYSTEM_PROMPT,
-        DETERMINE_RAG_USER_PROMPT.format(question=question),
+        DETERMINE_RAG_USER_PROMPT.format(question=question, conversation=conversation),
         RagDecision,
     )
     return response
@@ -41,7 +40,10 @@ def determine_use_rag(question) -> RagDecision:
 
 def format_conversation(user: list[str], ai: list[str]) -> str:
     return "\n".join(
-        [f"Child: {user[i]}\nYou: {ai[i]}" for i in range(min(len(user), len(ai)))]
+        [
+            f"こども: {user[i]}\nビッグバード: {ai[i]}"
+            for i in range(min(len(user), len(ai)))
+        ]
     )
 
 
@@ -53,19 +55,13 @@ def chat_answer(
     child_words: list[str],
     ai_words: list[str],
 ) -> str:
-    rag_decision = determine_use_rag(question)
     conversation = format_conversation(child_words, ai_words)
+    rag_decision = determine_use_rag(question, conversation)
+    print(f"RAGを使うかどうかの判断：\n{rag_decision}")
 
     if rag_decision.use_rag:
-        related_docs = hybrid_search()
-        user_prompt = CHAT_ANSWER_USER_PROMPT.format(
-            question=question,
-            character=character,
-            analysis=analysis,
-            mental=mental,
-            conversation=conversation,
-        )
-    else:
+        related_docs = hybrid_search(f"{conversation}\n{question}")
+        print(f"検索結果：\n{related_docs}")
         user_prompt = RAG_ANSWER_USER_PROMPT.format(
             question=question,
             character=character,
@@ -74,6 +70,14 @@ def chat_answer(
             conversation=conversation,
             related_docs=related_docs,
         )
-
+    else:
+        user_prompt = CHAT_ANSWER_USER_PROMPT.format(
+            question=question,
+            character=character,
+            analysis=analysis,
+            mental=mental,
+            conversation=conversation,
+        )
     answer = gpt_call(ANSWER_SYSTEM_PROMPT, user_prompt)
+    print(f"LLMによる応答：\n{answer}")
     return answer

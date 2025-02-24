@@ -46,7 +46,7 @@ def gpt_call(
         content = chunk.choices[0].delta.content  # type: ignore
         if type(content) == str:
             response_text += content
-            print(content, end="", flush=True)
+            # print(content, end="", flush=True)
             # yield content
     return response_text
 

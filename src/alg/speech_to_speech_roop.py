@@ -7,15 +7,6 @@ from db.access_db import save_conversation
 from model.speech_call import speech_call
 from model.speech_recognition_call import speech_recognition_call
 
-# from alg.prompt.text_to_text_prompt import SYSTEM_PROMPT, USER_PROMPT
-# from model.gpt_call import gpt_call
-
-
-def format_conversation(user: list[str], ai: list[str]) -> str:
-    return "\n".join(
-        [f"Child: {user[i]}\nYou: {ai[i]}" for i in range(min(len(user), len(ai)))]
-    )
-
 
 def sts_roop():
     audio_dir = "data/conversation3"
@@ -28,18 +19,12 @@ def sts_roop():
     while True:
         voice_text = speech_recognition_call()
 
-        analysis, mental, character = load_analysis(), load_mental(), load_character()
-        # conversation = format_conversation(child_words, ai_words)
+        # analysis, mental, character = load_analysis(), load_mental(), load_character()
+        analysis, mental, character = "まだ不明です", "まだ不明です", "まだ不明です"
 
         response_text = chat_answer(
             voice_text, analysis, mental, character, child_words, ai_words
         )
-        # reponse_text = gpt_call(
-        #     SYSTEM_PROMPT,
-        #     USER_PROMPT.format(
-        #         conversation=conversation, input=voice_text, character=character
-        #     ),
-        # )
 
         speech_call(response_text, os.path.join(audio_dir, f"{voice_text}.mp3"))
 

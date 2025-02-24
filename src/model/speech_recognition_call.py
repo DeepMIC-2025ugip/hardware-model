@@ -14,7 +14,7 @@ def speech_recognition_call() -> Union[str, None]:
             listener.energy_threshold = THRESHOLD
             voice = listener.listen(source)
             voice_text = listener.recognize_google(voice, language="ja-JP")
-            print(f"text: {voice_text}")
+            # print(f"text: {voice_text}")
             return voice_text
 
     except sr.UnknownValueError:
