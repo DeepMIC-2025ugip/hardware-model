@@ -31,7 +31,9 @@ def sts_roop():
         analysis, mental, character = load_analysis(), load_mental(), load_character()
         # conversation = format_conversation(child_words, ai_words)
 
-        response_text = chat_answer(voice_text, analysis, mental, character)
+        response_text = chat_answer(
+            voice_text, analysis, mental, character, child_words, ai_words
+        )
         # reponse_text = gpt_call(
         #     SYSTEM_PROMPT,
         #     USER_PROMPT.format(

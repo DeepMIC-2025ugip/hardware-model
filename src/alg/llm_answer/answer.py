@@ -1,6 +1,11 @@
 import requests
 from pydantic import BaseModel, Field
 
+from alg.llm_answer.prompt.chat_answer_prompt import (
+    ANSWER_SYSTEM_PROMPT,
+    CHAT_ANSWER_USER_PROMPT,
+    RAG_ANSWER_USER_PROMPT,
+)
 from alg.llm_answer.prompt.use_rag_prompt import (
     DETERMINE_RAG_SYSTEM_PROMPT,
     DETERMINE_RAG_USER_PROMPT,
@@ -34,34 +39,41 @@ def determine_use_rag(question) -> RagDecision:
     return response
 
 
-def chat_answer(question: str, analysis: str, mental: str, character: str) -> str:
+def format_conversation(user: list[str], ai: list[str]) -> str:
+    return "\n".join(
+        [f"Child: {user[i]}\nYou: {ai[i]}" for i in range(min(len(user), len(ai)))]
+    )
+
+
+def chat_answer(
+    question: str,
+    analysis: str,
+    mental: str,
+    character: str,
+    child_words: list[str],
+    ai_words: list[str],
+) -> str:
     rag_decision = determine_use_rag(question)
+    conversation = format_conversation(child_words, ai_words)
 
-    # TODO: analyze, mental, characterを入れてプロンプトを作る
-
-    system_prompt = """"""
     if rag_decision.use_rag:
         related_docs = hybrid_search()
-        user_prompt = f"""
-        hogehoge
-        
-        Question:
-        {question}
-        
-        Related Documents:
-        {related_docs}
-        
-        Output:
-        """
+        user_prompt = CHAT_ANSWER_USER_PROMPT.format(
+            question=question,
+            character=character,
+            analysis=analysis,
+            mental=mental,
+            conversation=conversation,
+        )
     else:
-        user_prompt = f"""
-        fugafuga
-        
-        Question:
-        {question}
-        
-        Output:
-        """
+        user_prompt = RAG_ANSWER_USER_PROMPT.format(
+            question=question,
+            character=character,
+            analysis=analysis,
+            mental=mental,
+            conversation=conversation,
+            related_docs=related_docs,
+        )
 
-    answer = gpt_call(system_prompt, user_prompt.format(question))
+    answer = gpt_call(ANSWER_SYSTEM_PROMPT, user_prompt)
     return answer
