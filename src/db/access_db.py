@@ -30,9 +30,36 @@ def save_conversation(child_content, ai_content, visible: bool = True):
         check_response(response)
 
 
-def analyze_day():
-    """1日の会話データを解析"""
-    response = requests.post(f"{settings.backend_url}/analyses/analyze_day/")
+# TODO:O このAPIを再作成
+def analyze_user():
+    """子どもの趣味趣向を分析"""
+    response = requests.post(f"{settings.backend_url}/analysis/analyze/")
+    return check_response(response)
+
+
+# TODO: このAPIを作成
+def analyze_mental():
+    """子どもの性格を解析"""
+    response = requests.post(f"{settings.backend_url}/mental/analyze/")
+    return check_response(response)
+
+
+# TODO: このAPIを再作成
+def analyze_character():
+    """子どもの性格を解析"""
+    response = requests.post(f"{settings.backend_url}/characters/analyze/")
+    return check_response(response)
+
+
+def get_latest_analysis():
+    """最新の子どもの趣味趣向の分析結果を取得"""
+    response = requests.get(f"{settings.backend_url}/analysis/latest/")
+    return check_response(response)
+
+
+def get_latest_mental():
+    """最新の子どものメンタルヘルスを取得"""
+    response = requests.get(f"{settings.backend_url}/mental/latest/")
     return check_response(response)
 
 
@@ -42,17 +69,13 @@ def get_latest_character():
     return check_response(response)
 
 
-def analyze_character():
-    """子どもの性格を解析"""
-    response = requests.post(f"{settings.backend_url}/characters/analyze/")
-    return check_response(response)
-
-
 if __name__ == "__main__":
     save_conversation(from_system=False, content="もう一回テストするよー！！！！")
 
-    analyze_day()
-
-    get_latest_character()
-
+    analyze_user()
+    analyze_mental()
     analyze_character()
+
+    print(get_latest_analysis())
+    print(get_latest_mental())
+    print(get_latest_character())

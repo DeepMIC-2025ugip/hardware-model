@@ -1,12 +1,14 @@
 import os
 
 from alg.hide_error import hide_alsa_error, redirect_error_output, restore_stderr
-from alg.load_character import load_character
-from alg.prompt.text_to_text_prompt import SYSTEM_PROMPT, USER_PROMPT
+from alg.llm_answer.answer import chat_answer
+from alg.load_user_info import load_analysis, load_character, load_mental
 from db.access_db import save_conversation
-from model.gpt_call import create_messages, gpt_call
 from model.speech_call import speech_call
 from model.speech_recognition_call import speech_recognition_call
+
+# from alg.prompt.text_to_text_prompt import SYSTEM_PROMPT, USER_PROMPT
+# from model.gpt_call import gpt_call
 
 
 def format_conversation(user: list[str], ai: list[str]) -> str:
@@ -26,23 +28,23 @@ def sts_roop():
     while True:
         voice_text = speech_recognition_call()
 
-        character = load_character()
-        conversation = format_conversation(child_words, ai_words)
+        analysis, mental, character = load_analysis(), load_mental(), load_character()
+        # conversation = format_conversation(child_words, ai_words)
 
-        messages = create_messages(
-            SYSTEM_PROMPT,
-            USER_PROMPT.format(
-                conversation=conversation, input=voice_text, character=character
-            ),
-        )
-        reponse_text = gpt_call(messages)
+        response_text = chat_answer(voice_text, analysis, mental, character)
+        # reponse_text = gpt_call(
+        #     SYSTEM_PROMPT,
+        #     USER_PROMPT.format(
+        #         conversation=conversation, input=voice_text, character=character
+        #     ),
+        # )
 
-        speech_call(reponse_text, os.path.join(audio_dir, f"{voice_text}.mp3"))
+        speech_call(response_text, os.path.join(audio_dir, f"{voice_text}.mp3"))
 
-        save_conversation(voice_text, reponse_text, visible)
+        save_conversation(voice_text, response_text, visible)
 
         child_words.append(voice_text)
-        ai_words.append(reponse_text)
+        ai_words.append(response_text)
 
 
 def main():
