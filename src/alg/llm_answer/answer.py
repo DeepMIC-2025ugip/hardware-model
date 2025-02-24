@@ -1,10 +1,23 @@
+import requests
 from pydantic import BaseModel, Field
 
-from src.model.gpt_call import gpt_call, gpt_call_schema
+from alg.llm_answer.prompt.use_rag_prompt import (
+    DETERMINE_RAG_SYSTEM_PROMPT,
+    DETERMINE_RAG_USER_PROMPT,
+)
+from model.gpt_call import gpt_call, gpt_call_schema
+from settings import settings
 
 
-def hybrid_search() -> list[str]:
-    pass
+def hybrid_search(question: str, top: int = 4) -> list[str]:
+    url = f"{settings.backend_url}/search/hybrid_search/"
+    payload = {"question": question, "top": top}
+    response = requests.post(url, json=payload)
+
+    if response.status_code != 200:
+        raise Exception(f"Failed to get related documents: {response.text}")
+    else:
+        return response.json()
 
 
 class RagDecision(BaseModel):
@@ -13,19 +26,11 @@ class RagDecision(BaseModel):
 
 
 def determine_use_rag(question) -> RagDecision:
-    system_prompt = """"""
-    user_prompt = """
-    output_format: 
-    {{
-      "user_rag": bool
-      "searc_sentence": str  
-    }}
-    
-    Question:
-    {question}
-    """
-
-    response = gpt_call_schema(system_prompt, user_prompt.format(question), RagDecision)
+    response = gpt_call_schema(
+        DETERMINE_RAG_SYSTEM_PROMPT,
+        DETERMINE_RAG_USER_PROMPT.format(question=question),
+        RagDecision,
+    )
     return response
 
 
