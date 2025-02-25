@@ -25,15 +25,16 @@ def speech_call(
     byte_stream = io.BytesIO(response.content)
     audio = AudioSegment.from_file(byte_stream, format=audio_format)
 
+    audio.export(save_file, format=audio_format)
+    
     play(audio)
 
-    audio.export(save_file, format=audio_format)
-
-    return response
+    return audio
 
 
 if __name__ == "__main__":
     input_text = input("Q: ")
-    save_file = f"{input_text}.mp3"
-    speech_call(input_text, save_file)
+    save_file = f"data/music/{input_text}.mp3"
+    audio = speech_call(input_text, save_file)
+    play(audio)
     print("The audio file is saved.")

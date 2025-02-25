@@ -80,4 +80,5 @@ def chat_answer(
         )
     answer = gpt_call(ANSWER_SYSTEM_PROMPT, user_prompt)
     print(f"LLMによる応答：\n{answer}")
+    answer = answer.replace("ビッグバード:", "").strip()
     return answer

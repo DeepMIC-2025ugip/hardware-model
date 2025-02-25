@@ -1,4 +1,6 @@
 import os
+import subprocess
+from pydub.playback import play
 
 from alg.hide_error import hide_alsa_error, redirect_error_output, restore_stderr
 from alg.llm_answer.answer import chat_answer
@@ -6,6 +8,10 @@ from alg.load_user_info import load_analysis, load_character, load_mental
 from db.access_db import save_conversation
 from model.speech_call import speech_call
 from model.speech_recognition_call import speech_recognition_call
+
+
+def play_mp3(file_path):
+    return subprocess.Popen(['mpc', 'clear', '&&', 'mpc', 'add', file_path, '&&', 'mpc', 'play'])
 
 
 def sts_roop():
@@ -18,16 +24,13 @@ def sts_roop():
     visible = True
     while True:
         voice_text = speech_recognition_call()
-
-        # analysis, mental, character = load_analysis(), load_mental(), load_character()
-        analysis, mental, character = "まだ不明です", "まだ不明です", "まだ不明です"
-
+        
+        analysis, mental, character = load_analysis(), load_mental(), load_character()
         response_text = chat_answer(
             voice_text, analysis, mental, character, child_words, ai_words
         )
-
         speech_call(response_text, os.path.join(audio_dir, f"{voice_text}.mp3"))
-
+        
         save_conversation(voice_text, response_text, visible)
 
         child_words.append(voice_text)

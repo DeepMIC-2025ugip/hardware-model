@@ -9,12 +9,12 @@ THRESHOLD = 2000
 def speech_recognition_call() -> Union[str, None]:
     try:
         with sr.Microphone() as source:
-            print("\nListening...")
+            print("\n\nListening...")
             listener.adjust_for_ambient_noise(source)
             listener.energy_threshold = THRESHOLD
             voice = listener.listen(source)
             voice_text = listener.recognize_google(voice, language="ja-JP")
-            # print(f"text: {voice_text}")
+            print(f"text: {voice_text}")
             return voice_text
 
     except sr.UnknownValueError:
